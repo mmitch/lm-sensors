@@ -177,12 +177,15 @@ static void do_a_print(const sensors_chip_name *name)
 
 static void do_a_json_print(const sensors_chip_name *name)
 {
+	int nr = 0, has_features = 0;
+
 	printf("   \"%s\":{\n", sprintf_chip_name(name));
 	if (!hide_adapter) {
 		const char *adap = sensors_get_adapter_name(&name->bus);
-		if (adap)
-			printf("      \"Adapter\": \"%s\",\n", adap);
-		else
+		if (adap) {
+			has_features = sensors_get_features(name, &a) != NULL;
+			printf("      \"Adapter\": \"%s\"%s\n", adap, has_features ? "," : "");
+		} else
 			fprintf(stderr, "Can't get adapter name\n");
 	}
 	print_chip_json(name);
